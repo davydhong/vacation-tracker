@@ -63,3 +63,11 @@ export const IO_OPTIONS = {
   EDIT: 'EDIT',
   DELETE: 'DELETE'
 };
+
+export const removeRow = (array, index) => {
+  if (index < array.length) {
+    return array.filter((ele, idx) => idx !== index);
+  } else {
+    return array;
+  }
+};

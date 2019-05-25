@@ -9,6 +9,8 @@ employeeRows.set(3, new EmployeeInfo(READ, 3, 'Michael', 'Jackson', roles[10].va
 employeeRows.set(4, new EmployeeInfo(READ, 4, 'Bruce', 'Springsteen', roles[8].value, '2019-05-21'));
 employeeRows.set(5, new EmployeeInfo(READ, 5, 'Elvis', 'Presley', roles[4].value, '2017-05-24'));
 
+export const employeeRowsArr = [...employeeRows.values()];
+
 export const vacationData = new Map();
 vacationData.set(1, new VacationInfo(READ, 1, 2, '2019-05-24', '2019-05-29'));
 vacationData.set(2, new VacationInfo(READ, 2, 3, '2019-05-25', '2018-06-05'));

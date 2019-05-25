@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import clsx from 'clsx';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -13,11 +13,12 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import { mainListItems } from './listItems';
+import { MainListItems } from './listItems';
 import { Employees, TimeOff } from './Employees';
 import { useStyles } from './useStyles';
-import { employeeRows, vacationRows, names, vacationData } from './InitData';
+import { employeeRows, employeeRowsArr, vacationRows, names, vacationData } from './InitData';
 import { EmployeeInfo, roles, IO_OPTIONS } from './utils';
+import { VIEWS } from './listItems';
 const { READ, EDIT, DELETE } = IO_OPTIONS;
 
 // Creating Contexts
@@ -53,6 +54,8 @@ const reducer = (state, action) => {
     case DELETE:
       if (typeof action.id === 'number') {
         state.delete(action.id);
+        console.log('delete called');
+        console.log('state', state);
         return state;
       }
       return state;
@@ -71,35 +74,34 @@ const reducer = (state, action) => {
 };
 
 // Boarview Definition
-const EMPLOYEES = 'EMPLOYEES';
-const TIMEOFF = 'TIMEOFF';
 
-const getViews = classes => ({
-  [EMPLOYEES]: (
-    <Grid item xs={12}>
-      <Paper className={classes.paper}>
-        <Employees />
-      </Paper>
-    </Grid>
-  ),
-  [TIMEOFF]: (
-    <Grid item xs={12}>
-      <Paper className={classes.paper}>
-        <TimeOff />
-      </Paper>
-    </Grid>
-  )
-});
+const { EMPLOYEES, TIMEOFF } = VIEWS;
+
+const viewReducer = (state, action) => {
+  switch (action.type) {
+    case EMPLOYEES:
+      return EMPLOYEES;
+    case TIMEOFF:
+      return TIMEOFF;
+    default:
+      return state;
+  }
+};
 
 export default function Dashboard() {
   const classes = useStyles();
 
-  const DASHBOARD_VIEWS = getViews(classes);
-
   const [isDrawerOpen, dispatchDrawer] = useReducer(drawerReducer, true);
-  const [employees, dispatchEmployees] = useReducer(reducer, employeeRows);
+  const [view, dispatchView] = useReducer(viewReducer, EMPLOYEES);
+  const [employees, dispatchEmployees] = useReducer(reducer, employeeRowsArr);
   const [vacations, dispatchVacations] = useReducer(reducer, vacationData);
 
+  useEffect(() => {
+    console.log('calling force Update');
+    return () => {
+      Employees.forceUpdate();
+    };
+  }, [employees]);
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -130,23 +132,39 @@ export default function Dashboard() {
           </IconButton>
         </div>
         <Divider />
-        <List>{mainListItems}</List>
+        <List>
+          <MainListItems {...{ dispatchView }} />
+        </List>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
-            {/* Employee Data */}
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <Employees />
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <TimeOff />
-              </Paper>
-            </Grid>
+            {/* Conditional View Selection */}
+            {
+              {
+                [EMPLOYEES]: (
+                  <EmployeeContext.Provider value={{ employees, dispatchEmployees }}>
+                    <Grid item xs={12}>
+                      <Paper className={classes.paper}>
+                        <Employees />
+                      </Paper>
+                    </Grid>
+                  </EmployeeContext.Provider>
+                ),
+                [TIMEOFF]: (
+                  <EmployeeContext.Provider value={{ employees }}>
+                    <VacationContext.Provider value={{ vacations, dispatchVacations }}>
+                      <Grid item xs={12}>
+                        <Paper className={classes.paper}>
+                          <TimeOff />
+                        </Paper>
+                      </Grid>
+                    </VacationContext.Provider>
+                  </EmployeeContext.Provider>
+                )
+              }[view]
+            }
           </Grid>
         </Container>
       </main>
