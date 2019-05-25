@@ -36,9 +36,9 @@ export function Employees() {
         <TableBody>
           {/* New Employee Input */}
           <EmployeeRow />
-          {employees.map(row => (
+          {employees.map((row, idx) => (
             // Existing Employee Input
-            <EmployeeRow {...{ row, key: row.id }} />
+            <EmployeeRow {...{ row, key: idx, idx }} />
           ))}
         </TableBody>
       </Table>
@@ -53,9 +53,14 @@ export function Employees() {
 
 export function TimeOff() {
   const classes = useStyles();
-  const { employees } = useContext(EmployeeContext);
-  const { vacations } = useContext(VacationContext);
-  const vacationRows = getVacationRows(vacations, employees);
+  const { employeeIDs, vacations } = useContext(VacationContext);
+
+  console.log({
+    employeeIDs,
+    vacations
+  });
+
+  const vacationRows = getVacationRows(vacations, employeeIDs);
 
   return (
     <>

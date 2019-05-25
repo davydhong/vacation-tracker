@@ -31,7 +31,7 @@ function editMenuReducer(state, action) {
   }
 }
 
-export function EmployeeRow({ row }) {
+export function EmployeeRow({ row, idx }) {
   const classes = useStyles();
   const [editMenu, dispatchEditMenu] = useReducer(editMenuReducer, false);
   const { dispatchEmployees } = useContext(EmployeeContext);
@@ -68,8 +68,8 @@ export function EmployeeRow({ row }) {
       <TableCell>
         {editMenu ? (
           <>
-            <EditIcon className={classes.icon} onClick={() => dispatchEmployees({ type: EDIT, id: row.id })} />
-            <DeleteIcon className={classes.icon} onClick={() => dispatchEmployees({ type: DELETE, id: row.id })} />
+            <EditIcon className={classes.icon} onClick={() => dispatchEmployees({ type: EDIT, id: idx })} />
+            <DeleteIcon className={classes.icon} onClick={() => dispatchEmployees({ type: DELETE, id: idx })} />
           </>
         ) : (
           <></>

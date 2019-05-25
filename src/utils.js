@@ -47,15 +47,9 @@ export const getNames = rows => {
   });
 };
 
-export const getVacationRows = (vacationData, employeeData) => {
-  const vacationRows = new Map();
-  for (let [idx, vacation] of vacationData) {
-    if (employeeData.get(vacation.employeeId)) {
-      vacation.fullName = employeeData.get(vacation.employeeId).fullName;
-      vacationRows.set(idx, vacation);
-    }
-  }
-  return vacationRows;
+export const getVacationRows = (vacationData, employeeIds) => {
+  console.log('employeeIds', employeeIds);
+  return vacationData.filter(vacation => employeeIds.has(vacation.employeeId));
 };
 
 export const IO_OPTIONS = {
@@ -71,3 +65,6 @@ export const removeRow = (array, index) => {
     return array;
   }
 };
+
+// extract IDs
+export const getIDset = array => new Set(array.map(ele => ele.id));
