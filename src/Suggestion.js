@@ -32,7 +32,10 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(0.5, 0.25)
   },
   chipFocused: {
-    backgroundColor: emphasize(theme.palette.type === 'light' ? theme.palette.grey[300] : theme.palette.grey[700], 0.08)
+    backgroundColor: emphasize(
+      theme.palette.type === 'light' ? theme.palette.grey[300] : theme.palette.grey[700],
+      0.08
+    )
   },
   noOptionsMessage: {
     padding: theme.spacing(1, 2)
@@ -60,7 +63,10 @@ const useStyles = makeStyles(theme => ({
 
 function NoOptionsMessage(props) {
   return (
-    <Typography color="textSecondary" className={props.selectProps.classes.noOptionsMessage} {...props.innerProps}>
+    <Typography
+      color="textSecondary"
+      className={props.selectProps.classes.noOptionsMessage}
+      {...props.innerProps}>
       {props.children}
     </Typography>
   );
@@ -130,7 +136,10 @@ Option.propTypes = {
 
 function Placeholder(props) {
   return (
-    <Typography color="textSecondary" className={props.selectProps.classes.placeholder} {...props.innerProps}>
+    <Typography
+      color="textSecondary"
+      className={props.selectProps.classes.placeholder}
+      {...props.innerProps}>
       {props.children}
     </Typography>
   );
@@ -214,7 +223,6 @@ const components = {
 function IntegrationReactSelect({ suggestions, defaultVal, placeholder }) {
   const classes = useStyles();
   const theme = useTheme();
-  console.log('defaultVal', defaultVal);
   const [single, setSingle] = React.useState(defaultVal);
 
   function handleChangeSingle(value) {

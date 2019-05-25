@@ -1,6 +1,7 @@
 /* eslint-disable no-script-url */
 
-import React from 'react';
+import React, { useReducer } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Link from '@material-ui/core/Link';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -10,20 +11,49 @@ import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 import TextField from '@material-ui/core/TextField';
 import DatePickers from './DatePickers';
-import { EmployeeInfo, rows, roles, names } from './InitData';
 import Suggestion from './Suggestion';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import { employeeRows, vacationRows, names } from './InitData';
+import { EmployeeInfo, roles } from './utils';
+
+const useStyles = makeStyles({
+  table: {
+    tableLayout: 'fixed'
+  },
+  icon: {
+    color: 'rgba(0, 0, 0, 0.54)'
+  }
+});
+
+const SHOW_EDIT_OPTION = 'SHOW_EDIT_OPTION';
+const HIDE_EDIT_OPTION = 'HIDE_EDIT_OPTION';
+function editMenuReducer(state, action) {
+  switch (action.type) {
+    case SHOW_EDIT_OPTION:
+      return true;
+    case HIDE_EDIT_OPTION:
+      return false;
+    default:
+      return state;
+  }
+}
 
 function EmployeeRow({ row }) {
+  const classes = useStyles();
+  const [editMenu, dispatchEditMenu] = useReducer(editMenuReducer, false);
+
   if (!row) {
     row = new EmployeeInfo();
   }
-  console.log('row.role', row.role);
   return (
-    <TableRow>
+    <TableRow
+      onMouseEnter={() => dispatchEditMenu({ type: SHOW_EDIT_OPTION })}
+      onMouseLeave={() => dispatchEditMenu({ type: HIDE_EDIT_OPTION })}>
       <TableCell>
         {/* name fields */}
         <TextField
-          value={row.firstName + ' ' + row.lastName}
+          value={row.fullName}
           onChange={function handle(e) {
             console.log('e.target.value', e.target.value);
           }}
@@ -42,21 +72,35 @@ function EmployeeRow({ row }) {
           }}
         />
       </TableCell>
+      <TableCell>
+        {editMenu ? (
+          <>
+            <EditIcon className={classes.icon} />
+            <DeleteIcon className={classes.icon} />
+          </>
+        ) : (
+          <></>
+        )}
+      </TableCell>
     </TableRow>
   );
 }
 
-function TimeOffRow({ row }) {
-  const fullName = row.firstName + ' ' + row.lastName;
+function TimeOffRow({ row: { io, fullName, timeOffStart, timeOffEnd } }) {
+  const classes = useStyles();
+  const [editMenu, dispatchEditMenu] = useReducer(editMenuReducer, false);
+
   return (
-    <TableRow>
+    <TableRow
+      onMouseEnter={() => dispatchEditMenu({ type: SHOW_EDIT_OPTION })}
+      onMouseLeave={() => dispatchEditMenu({ type: HIDE_EDIT_OPTION })}>
       <TableCell>
         <Suggestion {...{ suggestions: names, defaultVal: fullName, placeholder: fullName }} />
       </TableCell>
       <TableCell>
         {/* time fields */}
         <DatePickers
-          defaultTime={row.startDate}
+          defaultTime={timeOffStart}
           onChange={function handle(e) {
             console.log('e.target.value', e);
           }}
@@ -65,21 +109,33 @@ function TimeOffRow({ row }) {
       <TableCell>
         {/* time fields */}
         <DatePickers
-          defaultTime={row.startDate}
+          defaultTime={timeOffEnd}
           onChange={function handle(e) {
             console.log('e.target.value', e);
           }}
         />
+      </TableCell>
+      <TableCell>
+        {editMenu ? (
+          <>
+            <EditIcon className={classes.icon} />
+            <DeleteIcon className={classes.icon} />
+          </>
+        ) : (
+          <></>
+        )}
       </TableCell>
     </TableRow>
   );
 }
 
 export function Employees() {
+  const classes = useStyles();
+
   return (
     <>
       <Title>Recent Employees</Title>
-      <Table size="small">
+      <Table size="small" className={classes.table}>
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
@@ -90,7 +146,7 @@ export function Employees() {
         <TableBody>
           {/* New Employee Input */}
           <EmployeeRow />
-          {rows.map(row => (
+          {[...employeeRows.values()].map(row => (
             // Existing Employee Input
             <EmployeeRow {...{ row, key: row.id }} />
           ))}
@@ -106,10 +162,12 @@ export function Employees() {
 }
 
 export function TimeOff() {
+  const classes = useStyles();
+
   return (
     <>
       <Title>Time Off</Title>
-      <Table size="small">
+      <Table size="small" className={classes.table}>
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
@@ -118,15 +176,15 @@ export function TimeOff() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map(row => (
+          {[...vacationRows.values()].map(row => (
             // Existing Employee Input
             <TimeOffRow {...{ row, key: row.id }} />
           ))}
         </TableBody>
       </Table>
-      <div className="employees_seemore">
+      <div className="vacations_seemore">
         <Link color="primary" href="javascript:;">
-          See more Employees
+          See more Vacations
         </Link>
       </div>
     </>

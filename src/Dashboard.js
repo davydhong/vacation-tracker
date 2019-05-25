@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useReducer, useState } from 'react';
 import clsx from 'clsx';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -16,31 +16,101 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { mainListItems } from './listItems';
 import { Employees, TimeOff } from './Employees';
 import { useStyles } from './useStyles';
+import { employeeRows, vacationRows, names, vacationData } from './InitData';
+import { EmployeeInfo, roles, IO_OPTIONS } from './utils';
+const { READ, EDIT, DELETE } = IO_OPTIONS;
+
+// Creating Contexts
+export const EmployeeContext = React.createContext();
+export const VacationContext = React.createContext();
+
+// Defining Drawer Reducers
+const DRAWER_OPEN = 'OPEN';
+const DRAWER_CLOSE = 'CLOSE';
+const drawerReducer = (state, action) => {
+  switch (action.type) {
+    case DRAWER_OPEN:
+      return true;
+    case DRAWER_CLOSE:
+      return false;
+    default:
+      return state;
+  }
+};
+
+// Defining reducer for employee and vacation views
+const reducer = (state, action) => {
+  switch (action.type) {
+    case EDIT:
+      if (typeof action.id === 'number') {
+        const RowToEdit = state.get(action.id);
+        if (RowToEdit.io !== EDIT) {
+          RowToEdit.io = EDIT;
+          return state;
+        }
+      }
+      return state;
+    case DELETE:
+      if (typeof action.id === 'number') {
+        state.delete(action.id);
+        return state;
+      }
+      return state;
+    case READ:
+      if (typeof action.id === 'number') {
+        const RowToEdit = state.get(action.id);
+        if (RowToEdit.io !== READ) {
+          RowToEdit.io = READ;
+          return state;
+        }
+      }
+      return state;
+    default:
+      return state;
+  }
+};
+
+// Boarview Definition
+const EMPLOYEES = 'EMPLOYEES';
+const TIMEOFF = 'TIMEOFF';
+
+const getViews = classes => ({
+  [EMPLOYEES]: (
+    <Grid item xs={12}>
+      <Paper className={classes.paper}>
+        <Employees />
+      </Paper>
+    </Grid>
+  ),
+  [TIMEOFF]: (
+    <Grid item xs={12}>
+      <Paper className={classes.paper}>
+        <TimeOff />
+      </Paper>
+    </Grid>
+  )
+});
 
 export default function Dashboard() {
   const classes = useStyles();
 
-  // state stuff here
-  const [open, setOpen] = React.useState(true);
+  const DASHBOARD_VIEWS = getViews(classes);
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
+  const [isDrawerOpen, dispatchDrawer] = useReducer(drawerReducer, true);
+  const [employees, dispatchEmployees] = useReducer(reducer, employeeRows);
+  const [vacations, dispatchVacations] = useReducer(reducer, vacationData);
 
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+      <AppBar position="absolute" className={clsx(classes.appBar, isDrawerOpen && classes.appBarShift)}>
         <Toolbar className={classes.toolbar}>
           <IconButton
             edge="start"
             color="inherit"
             aria-label="Open drawer"
-            onClick={handleDrawerOpen}
-            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}>
+            onClick={() => dispatchDrawer({ type: DRAWER_OPEN })}
+            className={clsx(classes.menuButton, isDrawerOpen && classes.menuButtonHidden)}>
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
@@ -51,11 +121,11 @@ export default function Dashboard() {
       <Drawer
         variant="permanent"
         classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose)
+          paper: clsx(classes.drawerPaper, !isDrawerOpen && classes.drawerPaperClose)
         }}
-        open={open}>
+        open={isDrawerOpen}>
         <div className={classes.toolbarIcon}>
-          <IconButton onClick={handleDrawerClose}>
+          <IconButton onClick={() => dispatchDrawer({ type: DRAWER_CLOSE })}>
             <ChevronLeftIcon />
           </IconButton>
         </div>
