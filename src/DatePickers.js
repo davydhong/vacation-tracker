@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function DatePickers({ defaultTime }) {
+function DatePickers({ defaultTime, handle }) {
   const classes = useStyles();
 
   return (
@@ -26,6 +26,7 @@ function DatePickers({ defaultTime }) {
         InputLabelProps={{
           shrink: true
         }}
+        onChange={handle}
       />
     </form>
   );

@@ -1,3 +1,5 @@
+export const isValidName = name => /^[a-z ,.'-]+$/i.test(name);
+
 export class EmployeeInfo {
   constructor(io = 'READ', id = 0, firstName = '', lastName = '', role = '', startDate = '') {
     this.io = io;
@@ -9,6 +11,17 @@ export class EmployeeInfo {
   }
   get fullName() {
     return `${this.firstName} ${this.lastName}`;
+  }
+  set fullName(name) {
+    if (isValidName(name)) {
+      const nameArr = name.split(' ');
+      if (nameArr.length > 1) {
+        const lastName = nameArr.pop();
+        const firstName = nameArr.join(' ');
+        this.firstName = firstName;
+        this.lastName = lastName;
+      }
+    }
   }
 }
 
@@ -37,24 +50,30 @@ export const roles = [
   { value: 'CTO', label: 'CTO' }
 ];
 
-export const getNames = rows => {
-  return [...rows.values()].map(person => {
-    const name = person.firstName + ' ' + person.lastName;
-    return {
-      value: name,
-      label: name
-    };
-  });
-};
+export const getNameSuggestions = rows =>
+  rows.map(person => ({
+    value: person.fullName,
+    label: person.fullName
+  }));
 
-export const getVacationRows = (vacationData, employeeIds) => {
-  console.log('employeeIds', employeeIds);
-  return vacationData.filter(vacation => employeeIds.has(vacation.employeeId));
+export const getNameTable = rows => {
+  const result = {};
+  rows.forEach(row => (result[row.id] = row.fullName));
+  return result;
+};
+export const getVacationRows = (vacationData, employeeData, employeeIds) => {
+  return vacationData
+    .filter(vacation => employeeIds.has(vacation.employeeId))
+    .map(vacation => {
+      vacation.fullName = getNameTable(employeeData)[vacation.employeeId];
+      return vacation;
+    });
 };
 
 export const IO_OPTIONS = {
+  CREATE: 'CREATE',
   READ: 'READ',
-  EDIT: 'EDIT',
+  UPDATE: 'UPDATE',
   DELETE: 'DELETE'
 };
 
@@ -68,3 +87,5 @@ export const removeRow = (array, index) => {
 
 // extract IDs
 export const getIDset = array => new Set(array.map(ele => ele.id));
+
+export const capitalizeEveryWord = str => str.replace(/\b[a-z]/g, char => char.toUpperCase());

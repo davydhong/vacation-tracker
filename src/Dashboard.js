@@ -16,10 +16,10 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { MainListItems } from './listItems';
 import { Employees, TimeOff } from './Employees';
 import { useStyles } from './useStyles';
-import { employeeRows, employeeRowsArr, vacationRows, names, vacationData } from './InitData';
+import { employeeData, vacationData } from './InitData';
 import { IO_OPTIONS, removeRow, getIDset } from './utils';
 import { VIEWS } from './listItems';
-const { READ, EDIT, DELETE } = IO_OPTIONS;
+const { CREATE, READ, UPDATE, DELETE } = IO_OPTIONS;
 
 // Creating Contexts
 export const EmployeeContext = React.createContext();
@@ -39,56 +39,20 @@ const drawerReducer = (state, action) => {
   }
 };
 
-// Defining reducer for employee and vacation views
-/* const reducer = (state, action) => {
-  switch (action.type) {
-    case EDIT:
-      if (typeof action.id === 'number') {
-        const RowToEdit = state.get(action.id);
-        if (RowToEdit.io !== EDIT) {
-          RowToEdit.io = EDIT;
-          return state;
-        }
-      }
-      return state;
-    case DELETE:
-      if (typeof action.id === 'number') {
-        state.delete(action.id);
-        console.log('delete called');
-        console.log('state', state);
-        return state;
-      }
-      return state;
-    case READ:
-      if (typeof action.id === 'number') {
-        const RowToEdit = state.get(action.id);
-        if (RowToEdit.io !== READ) {
-          RowToEdit.io = READ;
-          return state;
-        }
-      }
-      return state;
-    default:
-      return state;
-  }
-};
- */
-
 const reducer = (state, action) => {
   switch (action.type) {
-    case EDIT:
-      if (typeof action.id === 'number') {
-        const RowToEdit = state[action.id];
-        if (RowToEdit.io !== EDIT) {
-          RowToEdit.io = EDIT;
-          return state;
-        }
+    case CREATE:
+      if (action.data) {
+        state.push(action.data);
       }
       return state;
-    case DELETE:
+    case UPDATE:
       if (typeof action.id === 'number') {
-        console.log('state', state);
-        return removeRow(state, action.id);
+        const RowToEdit = state[action.id];
+        if (RowToEdit.io !== UPDATE) {
+          RowToEdit.io = UPDATE;
+          return state;
+        }
       }
       return state;
     case READ:
@@ -98,6 +62,11 @@ const reducer = (state, action) => {
           RowToEdit.io = READ;
           return state;
         }
+      }
+      return state;
+    case DELETE:
+      if (typeof action.id === 'number') {
+        return removeRow(state, action.id);
       }
       return state;
     default:
@@ -125,19 +94,18 @@ export default function Dashboard() {
 
   const [isDrawerOpen, dispatchDrawer] = useReducer(drawerReducer, true);
   const [view, dispatchView] = useReducer(viewReducer, EMPLOYEES);
-  const [employees, dispatchEmployees] = useReducer(reducer, employeeRows);
+  const [employees, dispatchEmployees] = useReducer(reducer, employeeData);
   const [vacations, dispatchVacations] = useReducer(reducer, vacationData);
-
   const [employeeIDs, setEmployeeIDs] = useState(getIDset(employees));
 
   useEffect(() => {
-    setEmployeeIDs(() => getIDset(employees));
-    // console.log('employeeIDs', employeeIDs);
+    setEmployeeIDs(getIDset(employees));
   }, [employees]);
 
   useEffect(() => {
     console.log('employeeIDs', employeeIDs);
   }, [employeeIDs]);
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -189,7 +157,7 @@ export default function Dashboard() {
                   </EmployeeContext.Provider>
                 ),
                 [TIMEOFF]: (
-                  <VacationContext.Provider value={{ employeeIDs, vacations, dispatchVacations }}>
+                  <VacationContext.Provider value={{ employeeIDs, employees, vacations, dispatchVacations }}>
                     <Grid item xs={12}>
                       <Paper className={classes.paper}>
                         <TimeOff />

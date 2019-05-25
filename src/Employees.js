@@ -1,6 +1,6 @@
 /* eslint-disable no-script-url */
 
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Link from '@material-ui/core/Link';
 import Table from '@material-ui/core/Table';
@@ -11,7 +11,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 import { EmployeeRow, TimeOffRow } from './DataRows';
 import { EmployeeContext, VacationContext } from './Dashboard';
-import { getVacationRows } from './utils';
+import { getVacationRows, getNameSuggestions } from './utils';
 const useStyles = makeStyles({
   table: {
     tableLayout: 'fixed'
@@ -21,6 +21,7 @@ const useStyles = makeStyles({
 export function Employees() {
   const classes = useStyles();
   const { employees } = useContext(EmployeeContext);
+  const [displayCount, setDisplayCount] = useState(3);
 
   return (
     <>
@@ -28,22 +29,24 @@ export function Employees() {
       <Table size="small" className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Role</TableCell>
-            <TableCell>Start Date</TableCell>
+            <TableCell name="fullName">Name</TableCell>
+            <TableCell name="role">Role</TableCell>
+            <TableCell name="startDate">Start Date</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {/* New Employee Input */}
-          <EmployeeRow />
-          {employees.map((row, idx) => (
-            // Existing Employee Input
-            <EmployeeRow {...{ row, key: idx, idx }} />
-          ))}
+          <EmployeeRow className="employee-row-input" />
+          {employees
+            .filter((ele, idx) => idx < displayCount)
+            .map((row, idx) => (
+              // Existing Employee Input
+              <EmployeeRow {...{ row, key: idx, idx }} />
+            ))}
         </TableBody>
       </Table>
-      <div className="employees_seemore">
-        <Link color="primary" href="javascript:;">
+      <div className="employees-seemore">
+        <Link color="primary" onClick={() => setDisplayCount(displayCount + 3)}>
           See more Employees
         </Link>
       </div>
@@ -53,14 +56,12 @@ export function Employees() {
 
 export function TimeOff() {
   const classes = useStyles();
-  const { employeeIDs, vacations } = useContext(VacationContext);
+  const { employeeIDs, employees, vacations } = useContext(VacationContext);
+  const vacationRows = getVacationRows(vacations, employees, employeeIDs);
+  const nameSuggestions = getNameSuggestions(employees);
+  const [displayCount, setDisplayCount] = useState(3);
 
-  console.log({
-    employeeIDs,
-    vacations
-  });
-
-  const vacationRows = getVacationRows(vacations, employeeIDs);
+  console.log('vacationRows', vacationRows);
 
   return (
     <>
@@ -68,20 +69,23 @@ export function TimeOff() {
       <Table size="small" className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Time-Off Start</TableCell>
-            <TableCell>Time-Off End</TableCell>
+            <TableCell name="fullName">Name</TableCell>
+            <TableCell name="timeOffStart">Time-Off Start</TableCell>
+            <TableCell name="timeOffEnd">Time-Off End</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {[...vacationRows.values()].map(row => (
-            // Existing Employee Input
-            <TimeOffRow {...{ row, key: row.id }} />
-          ))}
+          <TimeOffRow className="timeoff-row-input" />
+          {vacationRows
+            .filter((ele, idx) => idx < displayCount)
+            .map((row, idx) => (
+              // Existing Employee Input
+              <TimeOffRow {...{ row, key: row.id, idx, nameSuggestions }} />
+            ))}
         </TableBody>
       </Table>
       <div className="vacations_seemore">
-        <Link color="primary" href="javascript:;">
+        <Link color="primary" onClick={() => setDisplayCount(displayCount + 3)}>
           See more Vacations
         </Link>
       </div>

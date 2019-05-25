@@ -1,3 +1,4 @@
+const isValidName = require('./utils.js');
 const capitalizeEveryWord = str => str.replace(/\b[a-z]/g, char => char.toUpperCase());
 
 console.log('capitalized', capitalizeEveryWord('tesasdf thisdf name'));
@@ -11,11 +12,3 @@ data.set(3, { id: 3, val: 150, name: 'second person' });
 for (let [idx, entry] of data) {
   console.log('entry', idx, entry);
 }
-
-// const sortedData = new Map([...data.entries()].sort((a, b) => a.val - b.val));
-
-// // console.log('sortedData', sortedData);
-
-// sortedData.forEach(row => {
-//   // console.log('row', row);
-// });
