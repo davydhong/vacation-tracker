@@ -2,7 +2,7 @@
   "name": "vacation-tracker",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://github.com/davydhong/vacation-tracker",
+  "homepage": "https://davydhong.github.io/vacation-tracker",
   "dependencies": {
     "@material-ui/core": "^4.0.0-rc.0",
     "@material-ui/icons": "^4.0.0-rc.0",
