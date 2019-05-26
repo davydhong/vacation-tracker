@@ -17,15 +17,21 @@ import { MainListItems } from './listItems';
 import { Employees, TimeOff } from './Employees';
 import { useStyles } from './useStyles';
 import { employeeData, vacationData } from './InitData';
-import { IO_OPTIONS, removeRow, getIDset } from './utils';
+import { IO_OPTIONS, SORT_OPTIONS, removeRow } from './utils';
 import { VIEWS } from './listItems';
 const { CREATE, READ, UPDATE, DELETE } = IO_OPTIONS;
+const { SORT_BY_FULLNAME, SORT_BY_ROLE, SORT_BY_STARTDATE, SORT_BY_TIMEOFFSTART, SORT_BY_TIMEOFFEND } = SORT_OPTIONS;
 
-// Creating Contexts
+//
+// ─── CREATING CONTEXTS ──────────────────────────────────────────────────────────
+//
+
 export const EmployeeContext = React.createContext();
 export const VacationContext = React.createContext();
 
-// Defining Drawer Reducers
+//
+// ─── DEFINING DRAWER REDUCERS ───────────────────────────────────────────────────
+//
 const DRAWER_OPEN = 'OPEN';
 const DRAWER_CLOSE = 'CLOSE';
 const drawerReducer = (state, action) => {
@@ -39,17 +45,36 @@ const drawerReducer = (state, action) => {
   }
 };
 
+//
+// ─── BOARVIEW REDUCER DEFINITION ────────────────────────────────────────────────────────
+//
+const { EMPLOYEES, TIMEOFF } = VIEWS;
+
+const viewReducer = (state, action) => {
+  switch (action.type) {
+    case EMPLOYEES:
+      return EMPLOYEES;
+    case TIMEOFF:
+      return TIMEOFF;
+    default:
+      return state;
+  }
+};
+
+//
+// ─── MAIN STATE REDUCER ─────────────────────────────────────────────────────────
+//
 const reducer = (state, action) => {
   switch (action.type) {
     case CREATE:
       if (action.data) {
         console.log('create called with data:', action.data);
-        // const newState = [...state];
-        state.unshift(action.data);
-        console.log('newState', state);
-        // return newState;
+        const newState = [...state];
+        newState.unshift(action.data);
+        console.log('newState', newState);
+        return newState;
       }
-      return state;
+    // return state;
     case UPDATE:
       if (typeof action.id === 'number') {
         const RowToEdit = state[action.id];
@@ -76,39 +101,40 @@ const reducer = (state, action) => {
         return removeRow(state, action.id);
       }
       return state;
+    case SORT_BY_FULLNAME:
+      state.sort((a, b) => ('' + a.fullName).localeCompare(b.fullName));
+      return state;
+    case SORT_BY_ROLE:
+      state.sort((a, b) => ('' + a.role).localeCompare(b.role));
+      return state;
+    case SORT_BY_STARTDATE:
+      state.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+      return state;
+    case SORT_BY_TIMEOFFSTART:
+      state.sort((a, b) => new Date(a.timeOffStart) - new Date(b.timeOffStart));
+      return state;
+    case SORT_BY_TIMEOFFEND:
+      state.sort((a, b) => new Date(a.timeOffEnd) - new Date(b.timeOffEnd));
+      console.log('state', state);
+      return state;
     default:
       return state;
   }
 };
-
-// Boarview Definition
-
-const { EMPLOYEES, TIMEOFF } = VIEWS;
-
-const viewReducer = (state, action) => {
-  switch (action.type) {
-    case EMPLOYEES:
-      return EMPLOYEES;
-    case TIMEOFF:
-      return TIMEOFF;
-    default:
-      return state;
-  }
-};
-
+//
+// ─── MAIN COMPONENT ─────────────────────────────────────────────────────────────
+//
 export default function Dashboard() {
   const classes = useStyles();
-
   const [isDrawerOpen, dispatchDrawer] = useReducer(drawerReducer, true);
   const [view, dispatchView] = useReducer(viewReducer, EMPLOYEES);
   const [employees, dispatchEmployees] = useReducer(reducer, employeeData);
   const [vacations, dispatchVacations] = useReducer(reducer, vacationData);
-  const [employeeIDs, setEmployeeIDs] = useState(getIDset(employees));
   const [newEmployeeId, setNewEmployeeId] = useState(10);
   const [newVacationId, setNewVacationId] = useState(10);
 
   useEffect(() => {
-    setEmployeeIDs(getIDset(employees));
+    console.log(employees);
   }, [employees]);
 
   return (
@@ -163,7 +189,7 @@ export default function Dashboard() {
                 ),
                 [TIMEOFF]: (
                   <VacationContext.Provider
-                    value={{ employeeIDs, employees, vacations, dispatchVacations, newVacationId, setNewVacationId }}>
+                    value={{ employees, vacations, dispatchVacations, newVacationId, setNewVacationId }}>
                     <Grid item xs={12}>
                       <Paper className={classes.paper}>
                         <TimeOff />

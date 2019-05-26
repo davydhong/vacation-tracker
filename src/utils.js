@@ -1,4 +1,5 @@
 export const isValidName = name => /^[a-z ,.'-]+$/i.test(name);
+export const capitalizeEveryWord = str => str.replace(/\b[a-z]/g, char => char.toUpperCase());
 
 export class EmployeeInfo {
   constructor(io = 'READ', id = 0, firstName = '', lastName = '', role = '', startDate = '') {
@@ -13,7 +14,7 @@ export class EmployeeInfo {
     return `${this.firstName} ${this.lastName}`;
   }
   set fullName(name) {
-    name = name.trim();
+    name = capitalizeEveryWord(name.trim());
     if (isValidName(name)) {
       const nameArr = name.split(' ');
       if (nameArr.length > 1) {
@@ -65,9 +66,11 @@ export const getNameIdTable = rows => {
   });
   return result;
 };
-export const getVacationRows = (vacationData, employeeData, employeeIds) => {
+
+export const getVacationRows = (vacationData, employeeData) => {
+  const nameIdTable = getNameIdTable(employeeData);
   return vacationData
-    .filter(vacation => employeeIds.has(vacation.employeeId))
+    .filter(vacation => vacation.employeeId in nameIdTable)
     .map(vacation => {
       vacation.fullName = getNameIdTable(employeeData)[vacation.employeeId];
       return vacation;
@@ -81,6 +84,14 @@ export const IO_OPTIONS = {
   DELETE: 'DELETE'
 };
 
+export const SORT_OPTIONS = {
+  SORT_BY_FULLNAME: 'SORT_BY_FULLNAME',
+  SORT_BY_ROLE: 'SORT_BY_ROLE',
+  SORT_BY_STARTDATE: 'SORT_BY_STARTDATE',
+  SORT_BY_TIMEOFFSTART: 'SORT_BY_TIMEOFFSTART',
+  SORT_BY_TIMEOFFEND: 'SORT_BY_TIMEOFFEND'
+};
+
 export const removeRow = (array, index) => {
   if (index < array.length) {
     return array.filter((ele, idx) => idx !== index);
@@ -89,7 +100,11 @@ export const removeRow = (array, index) => {
   }
 };
 
-// extract IDs
-export const getIDset = array => new Set(array.map(ele => ele.id));
-
-export const capitalizeEveryWord = str => str.replace(/\b[a-z]/g, char => char.toUpperCase());
+export const isValidData = object => {
+  for (let field in object) {
+    if (object[field] === '') {
+      return false;
+    }
+  }
+  return true;
+};

@@ -8,7 +8,7 @@ import Suggestion from './Suggestion';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
-import { EmployeeInfo, TimeOffInfo, roles, IO_OPTIONS, isValidName } from './utils';
+import { EmployeeInfo, TimeOffInfo, roles, IO_OPTIONS, isValidData } from './utils';
 import { EmployeeContext, VacationContext } from './Dashboard';
 const { CREATE, READ, UPDATE, DELETE } = IO_OPTIONS;
 
@@ -109,7 +109,7 @@ export function EmployeeRow({ row, idx }) {
         )}
       </TableCell>
       <TableCell>
-        {employeeData.io === UPDATE ? (
+        {isValidData(employeeData) && employeeData.io === UPDATE ? (
           // TODO: valid check to show
           <CheckIcon
             className={classes.icon}
@@ -121,7 +121,7 @@ export function EmployeeRow({ row, idx }) {
                 });
                 handleDataUpdate(null, employeeData, setEmployeeData, 'io', READ);
                 dispatchEmployees({ type: CREATE, data: employeeData });
-
+                // FIXME: input field does not refresh
                 setEmployeeData(new TimeOffInfo(UPDATE, newEmployeeId + 1));
               } else {
                 dispatchEmployees({ type: READ, id: idx });
@@ -206,7 +206,7 @@ export function TimeOffRow({ idx, row, nameSuggestions, newVacationId, setNewVac
         )}
       </TableCell>
       <TableCell>
-        {io === UPDATE ? (
+        {isValidData(vacationData) && io === UPDATE ? (
           // TODO: valid check to show
           <CheckIcon
             className={classes.icon}

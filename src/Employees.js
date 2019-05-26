@@ -11,7 +11,9 @@ import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 import { EmployeeRow, TimeOffRow } from './DataRows';
 import { EmployeeContext, VacationContext } from './Dashboard';
-import { getVacationRows, getNameSuggestions, getNameIdTable } from './utils';
+import { getVacationRows, getNameSuggestions, getNameIdTable, SORT_OPTIONS } from './utils';
+const { SORT_BY_FULLNAME, SORT_BY_ROLE, SORT_BY_STARTDATE, SORT_BY_TIMEOFFSTART, SORT_BY_TIMEOFFEND } = SORT_OPTIONS;
+
 const useStyles = makeStyles({
   table: {
     tableLayout: 'fixed'
@@ -24,7 +26,7 @@ const useStyles = makeStyles({
 
 export function Employees() {
   const classes = useStyles();
-  const { employees, newEmployeeId, setNewEmployeeId } = useContext(EmployeeContext);
+  const { employees, newEmployeeId, setNewEmployeeId, dispatchEmployees } = useContext(EmployeeContext);
   const [displayCount, setDisplayCount] = useState(3);
 
   return (
@@ -33,9 +35,15 @@ export function Employees() {
       <Table size="small" className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell name="fullName">Name</TableCell>
-            <TableCell name="role">Role</TableCell>
-            <TableCell name="startDate">Start Date</TableCell>
+            <TableCell name="fullName" onClick={() => dispatchEmployees({ type: SORT_BY_FULLNAME })}>
+              Name
+            </TableCell>
+            <TableCell name="role" onClick={() => dispatchEmployees({ type: SORT_BY_ROLE })}>
+              Role
+            </TableCell>
+            <TableCell name="startDate" onClick={() => dispatchEmployees({ type: SORT_BY_STARTDATE })}>
+              Start Date
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -64,7 +72,9 @@ export function Employees() {
 
 export function TimeOff() {
   const classes = useStyles();
-  const { employeeIDs, employees, vacations, newVacationId, setNewVacationId } = useContext(VacationContext);
+  const { dispatchVacations, employeeIDs, employees, vacations, newVacationId, setNewVacationId } = useContext(
+    VacationContext
+  );
   const vacationRows = getVacationRows(vacations, employees, employeeIDs);
   const nameSuggestions = getNameSuggestions(employees);
   const [displayCount, setDisplayCount] = useState(3);
@@ -77,9 +87,15 @@ export function TimeOff() {
       <Table size="small" className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell name="fullName">Name</TableCell>
-            <TableCell name="timeOffStart">Time-Off Start</TableCell>
-            <TableCell name="timeOffEnd">Time-Off End</TableCell>
+            <TableCell name="fullName" onClick={() => dispatchVacations({ type: SORT_BY_FULLNAME })}>
+              Name
+            </TableCell>
+            <TableCell name="timeOffStart" onClick={() => dispatchVacations({ type: SORT_BY_TIMEOFFSTART })}>
+              Time-Off Start
+            </TableCell>
+            <TableCell name="timeOffEnd" onClick={() => dispatchVacations({ type: SORT_BY_TIMEOFFEND })}>
+              Time-Off End
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
