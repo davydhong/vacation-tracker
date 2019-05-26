@@ -39,13 +39,7 @@ function handleDataUpdate(
   value = e.target.value,
   callBack
 ) {
-  console.log({
-    state,
-    fieldName,
-    value
-  });
   state[fieldName] = value;
-  console.log('state', state);
   setGenericState(state);
 }
 
@@ -56,10 +50,10 @@ export function EmployeeRow({ row, idx }) {
   const classes = useStyles();
   const [editMenu, dispatchEditMenu] = useReducer(editMenuReducer, false);
   const { dispatchEmployees, newEmployeeId, setNewEmployeeId } = useContext(EmployeeContext);
+
   if (!row) {
     row = new EmployeeInfo(UPDATE, newEmployeeId);
   }
-
   const [employeeData, setEmployeeData] = useState(row);
 
   return (
@@ -69,11 +63,11 @@ export function EmployeeRow({ row, idx }) {
       <TableCell>
         {/* name fields */}
         {employeeData.io === READ ? (
-          employeeData.fullName
+          row.fullName
         ) : (
           <TextField
             name="fullName"
-            defaultValue={employeeData.fullName}
+            defaultValue={row.fullName}
             onChange={e => {
               handleDataUpdate(e, employeeData, setEmployeeData);
             }}
@@ -83,7 +77,7 @@ export function EmployeeRow({ row, idx }) {
       <TableCell>
         {/* role fields */}
         {employeeData.io === READ ? (
-          employeeData.role
+          row.role
         ) : (
           <Suggestion
             name="role"
@@ -96,11 +90,11 @@ export function EmployeeRow({ row, idx }) {
       </TableCell>
       <TableCell>
         {/* time fields */}
-        {employeeData.io === READ ? (
-          new Date(employeeData.startDate).toLocaleDateString('en-us')
+        {row.io === READ ? (
+          new Date(row.startDate).toLocaleDateString('en-us')
         ) : (
           <DatePickers
-            defaultTime={employeeData.startDate}
+            defaultTime={row.startDate}
             name="startDate"
             handle={e => {
               handleDataUpdate(e, employeeData, setEmployeeData, 'startDate', e.target.value);
@@ -113,16 +107,14 @@ export function EmployeeRow({ row, idx }) {
           // TODO: valid check to show
           <CheckIcon
             className={classes.icon}
-            onClick={() => {
+            onClick={e => {
               if (newEmployeeId) {
                 setNewEmployeeId(id => {
-                  console.log('update id called', id);
                   return id + 1;
                 });
                 handleDataUpdate(null, employeeData, setEmployeeData, 'io', READ);
                 dispatchEmployees({ type: CREATE, data: employeeData });
-                // FIXME: input field does not refresh
-                setEmployeeData(new TimeOffInfo(UPDATE, newEmployeeId + 1));
+                setEmployeeData(new EmployeeInfo(UPDATE, newEmployeeId + 1));
               } else {
                 dispatchEmployees({ type: READ, id: idx });
               }
@@ -157,8 +149,6 @@ export function TimeOffRow({ idx, row, nameSuggestions, newVacationId, setNewVac
   const [editMenu, dispatchEditMenu] = useReducer(editMenuReducer, false);
   const { dispatchVacations } = useContext(VacationContext);
   const [vacationData, setVacationData] = useState(row);
-
-  // console.log('vacationData', vacationData);
 
   return (
     <TableRow
@@ -213,7 +203,6 @@ export function TimeOffRow({ idx, row, nameSuggestions, newVacationId, setNewVac
             onClick={() => {
               if (newVacationId) {
                 setNewVacationId(id => {
-                  console.log('update id called', id);
                   return id + 1;
                 });
                 handleDataUpdate(null, vacationData, setVacationData, 'io', READ);

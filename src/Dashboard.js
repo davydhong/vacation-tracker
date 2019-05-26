@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useState } from 'react';
+import React, { useReducer, useState } from 'react';
 import clsx from 'clsx';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -68,13 +68,9 @@ const reducer = (state, action) => {
   switch (action.type) {
     case CREATE:
       if (action.data) {
-        console.log('create called with data:', action.data);
-        const newState = [...state];
-        newState.unshift(action.data);
-        console.log('newState', newState);
-        return newState;
+        state.unshift(action.data);
       }
-    return state;
+      return state;
     case UPDATE:
       if (typeof action.id === 'number') {
         const RowToEdit = state[action.id];
@@ -94,10 +90,7 @@ const reducer = (state, action) => {
       }
       return state;
     case DELETE:
-      console.log(action.id);
       if (typeof action.id === 'number') {
-        console.log(state);
-        console.log(removeRow(state, action.id));
         return removeRow(state, action.id);
       }
       return state;
@@ -115,12 +108,12 @@ const reducer = (state, action) => {
       return state;
     case SORT_BY_TIMEOFFEND:
       state.sort((a, b) => new Date(a.timeOffEnd) - new Date(b.timeOffEnd));
-      console.log('state', state);
       return state;
     default:
       return state;
   }
 };
+
 //
 // ─── MAIN COMPONENT ─────────────────────────────────────────────────────────────
 //
@@ -178,7 +171,7 @@ export default function Dashboard() {
                   <EmployeeContext.Provider value={{ employees, dispatchEmployees, newEmployeeId, setNewEmployeeId }}>
                     <Grid item xs={12}>
                       <Paper className={classes.paper}>
-                        <Employees/>
+                        <Employees />
                       </Paper>
                     </Grid>
                   </EmployeeContext.Provider>

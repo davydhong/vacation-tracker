@@ -101,6 +101,12 @@ export const removeRow = (array, index) => {
 };
 
 export const isValidData = object => {
+  if ('employeeId' in object) {
+    if (new Date(object.timeOffStart) > new Date(object.timeOffEnd)) {
+      return false;
+    }
+  }
+
   for (let field in object) {
     if (object[field] === '') {
       return false;
@@ -108,4 +114,3 @@ export const isValidData = object => {
   }
   return true;
 };
-
