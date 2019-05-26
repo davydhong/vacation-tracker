@@ -1,3 +1,13 @@
+# Vacation Tracker
+This is a dashboard for tracking employees and employee vacations.
+You can see the end-product [HERE](https://compassionate-dubinsky-f195e0.netlify.com/).
+Or you can click on the following link:
+[https://compassionate-dubinsky-f195e0.netlify.com/](https://compassionate-dubinsky-f195e0.netlify.com/).
+
+![Alt text](vacation-tracker.png?raw=true "Page snapshot")
+
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
@@ -20,18 +30,18 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.<br>
 Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.<br><br>
 
 ## Notes about the Program
 
 ### Input Validation
 
 Input validation requires all fields to be filled out.
-When all fields are validated - a check mark will appear.
+When all fields are validated - a check mark will appear.<br>
 
 ### Sort
 
-You can click on the table headers to sort.
+You can click on the table headers to sort.<br>
 
 ### Edit and Delete
 
