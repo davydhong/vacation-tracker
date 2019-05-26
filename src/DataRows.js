@@ -10,6 +10,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
 import { EmployeeInfo, TimeOffInfo, roles, IO_OPTIONS, isValidData } from './utils';
 import { EmployeeContext, VacationContext } from './Dashboard';
+import { create } from 'jss';
 const { CREATE, READ, UPDATE, DELETE } = IO_OPTIONS;
 
 const useStyles = makeStyles({
@@ -52,7 +53,7 @@ export function EmployeeRow({ row, idx }) {
   const { dispatchEmployees, newEmployeeId, setNewEmployeeId } = useContext(EmployeeContext);
 
   if (!row) {
-    row = new EmployeeInfo(UPDATE, newEmployeeId);
+    row = new EmployeeInfo(CREATE, newEmployeeId);
   }
   const [employeeData, setEmployeeData] = useState(row);
 
@@ -103,18 +104,17 @@ export function EmployeeRow({ row, idx }) {
         )}
       </TableCell>
       <TableCell>
-        {isValidData(employeeData) && employeeData.io === UPDATE ? (
+        {isValidData(employeeData) && employeeData.io !== READ ? (
           // TODO: valid check to show
           <CheckIcon
             className={classes.icon}
             onClick={e => {
-              if (newEmployeeId) {
+              if (employeeData.io === CREATE) {
                 setNewEmployeeId(id => {
                   return id + 1;
                 });
-                handleDataUpdate(null, employeeData, setEmployeeData, 'io', READ);
                 dispatchEmployees({ type: CREATE, data: employeeData });
-                setEmployeeData(new EmployeeInfo(UPDATE, newEmployeeId + 1));
+                setEmployeeData(new EmployeeInfo(CREATE, newEmployeeId + 1));
               } else {
                 dispatchEmployees({ type: READ, id: idx });
               }
@@ -142,7 +142,7 @@ export function EmployeeRow({ row, idx }) {
 //
 export function TimeOffRow({ idx, row, nameSuggestions, newVacationId, setNewVacationId, nameIdTable }) {
   if (!row) {
-    row = new TimeOffInfo(UPDATE, newVacationId);
+    row = new TimeOffInfo(CREATE, newVacationId);
   }
   const { io, fullName, timeOffStart, timeOffEnd } = row;
   const classes = useStyles();
@@ -196,19 +196,18 @@ export function TimeOffRow({ idx, row, nameSuggestions, newVacationId, setNewVac
         )}
       </TableCell>
       <TableCell>
-        {isValidData(vacationData) && io === UPDATE ? (
+        {isValidData(vacationData) && io !== READ ? (
           // TODO: valid check to show
           <CheckIcon
             className={classes.icon}
             onClick={() => {
-              if (newVacationId) {
+              if (io === CREATE) {
+                console.log('create called');
                 setNewVacationId(id => {
                   return id + 1;
                 });
-                handleDataUpdate(null, vacationData, setVacationData, 'io', READ);
                 dispatchVacations({ type: CREATE, data: vacationData });
-
-                setVacationData(new TimeOffInfo(UPDATE, newVacationId + 1));
+                setVacationData(new TimeOffInfo(CREATE, newVacationId + 1));
               } else {
                 dispatchVacations({ type: READ, id: idx });
               }

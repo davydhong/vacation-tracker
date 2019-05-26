@@ -68,6 +68,7 @@ const reducer = (state, action) => {
   switch (action.type) {
     case CREATE:
       if (action.data) {
+        action.data.io = READ;
         state.unshift(action.data);
       }
       return state;
