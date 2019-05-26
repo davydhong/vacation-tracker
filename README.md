@@ -1,6 +1,7 @@
 # Vacation Tracker
 This is a dashboard for tracking employees and employee vacations.
 You can see the end-product [HERE](https://compassionate-dubinsky-f195e0.netlify.com/).<br>
+
 Or you can click on the following link:
 [https://compassionate-dubinsky-f195e0.netlify.com/](https://compassionate-dubinsky-f195e0.netlify.com/).
 
