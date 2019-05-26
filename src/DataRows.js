@@ -36,7 +36,8 @@ function handleDataUpdate(
   state,
   setGenericState,
   fieldName = e.target.attributes.name.value,
-  value = e.target.value
+  value = e.target.value,
+  callBack
 ) {
   console.log({
     state,
@@ -51,10 +52,10 @@ function handleDataUpdate(
 //
 // ─── EMPLOYEEROW ────────────────────────────────────────────────────────────────
 //
-export function EmployeeRow({ row, idx, newEmployeeId, setNewEmployeeId }) {
+export function EmployeeRow({ row, idx }) {
   const classes = useStyles();
   const [editMenu, dispatchEditMenu] = useReducer(editMenuReducer, false);
-  const { dispatchEmployees } = useContext(EmployeeContext);
+  const { dispatchEmployees, newEmployeeId, setNewEmployeeId } = useContext(EmployeeContext);
   if (!row) {
     row = new EmployeeInfo(UPDATE, newEmployeeId);
   }
@@ -113,9 +114,15 @@ export function EmployeeRow({ row, idx, newEmployeeId, setNewEmployeeId }) {
           <CheckIcon
             className={classes.icon}
             onClick={() => {
-              console.log(employeeData);
               if (newEmployeeId) {
+                setNewEmployeeId(id => {
+                  console.log('update id called', id);
+                  return id + 1;
+                });
+                handleDataUpdate(null, employeeData, setEmployeeData, 'io', READ);
                 dispatchEmployees({ type: CREATE, data: employeeData });
+
+                setEmployeeData(new TimeOffInfo(UPDATE, newEmployeeId + 1));
               } else {
                 dispatchEmployees({ type: READ, id: idx });
               }
@@ -205,7 +212,14 @@ export function TimeOffRow({ idx, row, nameSuggestions, newVacationId, setNewVac
             className={classes.icon}
             onClick={() => {
               if (newVacationId) {
+                setNewVacationId(id => {
+                  console.log('update id called', id);
+                  return id + 1;
+                });
+                handleDataUpdate(null, vacationData, setVacationData, 'io', READ);
                 dispatchVacations({ type: CREATE, data: vacationData });
+
+                setVacationData(new TimeOffInfo(UPDATE, newVacationId + 1));
               } else {
                 dispatchVacations({ type: READ, id: idx });
               }

@@ -1,6 +1,6 @@
 /* eslint-disable no-script-url */
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Link from '@material-ui/core/Link';
 import Table from '@material-ui/core/Table';
@@ -18,11 +18,14 @@ const useStyles = makeStyles({
   }
 });
 
+//
+// ─── EMPLOYEES ──────────────────────────────────────────────────────────────────
+//
+
 export function Employees() {
   const classes = useStyles();
   const { employees, newEmployeeId, setNewEmployeeId } = useContext(EmployeeContext);
   const [displayCount, setDisplayCount] = useState(3);
-  const [newId, setNewId] = useState(10);
 
   return (
     <>
@@ -55,13 +58,16 @@ export function Employees() {
   );
 }
 
+//
+// ─── TIMEOFF ────────────────────────────────────────────────────────────────────
+//
+
 export function TimeOff() {
   const classes = useStyles();
   const { employeeIDs, employees, vacations, newVacationId, setNewVacationId } = useContext(VacationContext);
   const vacationRows = getVacationRows(vacations, employees, employeeIDs);
   const nameSuggestions = getNameSuggestions(employees);
   const [displayCount, setDisplayCount] = useState(3);
-  const [newId, setNewId] = useState(10);
 
   const nameIdTable = getNameIdTable(employees);
 

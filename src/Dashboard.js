@@ -69,7 +69,10 @@ const reducer = (state, action) => {
       }
       return state;
     case DELETE:
+      console.log(action.id);
       if (typeof action.id === 'number') {
+        console.log(state);
+        console.log(removeRow(state, action.id));
         return removeRow(state, action.id);
       }
       return state;
@@ -106,16 +109,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     setEmployeeIDs(getIDset(employees));
-    // setNewEmployeeId(newEmployeeId => newEmployeeId + 1);
-    // console.log('newEmployeeId', newEmployeeId);
-    console.log('hi');
-  }, [employees, newEmployeeId]);
-
-  useEffect(() => {
-    // setNewVacationId(newVacationId => newVacationId + 1);
-    // console.log('newVacationId', newVacationId);
-    console.log('hi');
-  }, [newVacationId, vacations]);
+  }, [employees]);
 
   return (
     <div className={classes.root}>
