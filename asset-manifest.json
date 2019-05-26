@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.js": "/davydhong/vacation-tracker/static/js/main.12f4931b.chunk.js",
+    "main.js.map": "/davydhong/vacation-tracker/static/js/main.12f4931b.chunk.js.map",
+    "runtime~main.js": "/davydhong/vacation-tracker/static/js/runtime~main.9c36ab2a.js",
+    "runtime~main.js.map": "/davydhong/vacation-tracker/static/js/runtime~main.9c36ab2a.js.map",
+    "static/css/2.1015f008.chunk.css": "/davydhong/vacation-tracker/static/css/2.1015f008.chunk.css",
+    "static/js/2.44a367b4.chunk.js": "/davydhong/vacation-tracker/static/js/2.44a367b4.chunk.js",
+    "static/js/2.44a367b4.chunk.js.map": "/davydhong/vacation-tracker/static/js/2.44a367b4.chunk.js.map",
+    "index.html": "/davydhong/vacation-tracker/index.html",
+    "precache-manifest.2766b83c4e83112e3f0d41a7510c796c.js": "/davydhong/vacation-tracker/precache-manifest.2766b83c4e83112e3f0d41a7510c796c.js",
+    "service-worker.js": "/davydhong/vacation-tracker/service-worker.js",
+    "static/css/2.1015f008.chunk.css.map": "/davydhong/vacation-tracker/static/css/2.1015f008.chunk.css.map",
+    "static/media/index.css": "/davydhong/vacation-tracker/static/media/roboto-latin-900italic.bc833e72.woff"
+  }
+}
