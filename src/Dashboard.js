@@ -43,7 +43,11 @@ const reducer = (state, action) => {
   switch (action.type) {
     case CREATE:
       if (action.data) {
-        state.push(action.data);
+        console.log('create called with data:', action.data);
+        // const newState = [...state];
+        state.unshift(action.data);
+        console.log('newState', state);
+        // return newState;
       }
       return state;
     case UPDATE:
@@ -97,14 +101,21 @@ export default function Dashboard() {
   const [employees, dispatchEmployees] = useReducer(reducer, employeeData);
   const [vacations, dispatchVacations] = useReducer(reducer, vacationData);
   const [employeeIDs, setEmployeeIDs] = useState(getIDset(employees));
+  const [newEmployeeId, setNewEmployeeId] = useState(10);
+  const [newVacationId, setNewVacationId] = useState(10);
 
   useEffect(() => {
     setEmployeeIDs(getIDset(employees));
-  }, [employees]);
+    // setNewEmployeeId(newEmployeeId => newEmployeeId + 1);
+    // console.log('newEmployeeId', newEmployeeId);
+    console.log('hi');
+  }, [employees, newEmployeeId]);
 
   useEffect(() => {
-    console.log('employeeIDs', employeeIDs);
-  }, [employeeIDs]);
+    // setNewVacationId(newVacationId => newVacationId + 1);
+    // console.log('newVacationId', newVacationId);
+    console.log('hi');
+  }, [newVacationId, vacations]);
 
   return (
     <div className={classes.root}>
@@ -148,7 +159,7 @@ export default function Dashboard() {
             {
               {
                 [EMPLOYEES]: (
-                  <EmployeeContext.Provider value={{ employees, dispatchEmployees }}>
+                  <EmployeeContext.Provider value={{ employees, dispatchEmployees, newEmployeeId, setNewEmployeeId }}>
                     <Grid item xs={12}>
                       <Paper className={classes.paper}>
                         <Employees />
@@ -157,7 +168,8 @@ export default function Dashboard() {
                   </EmployeeContext.Provider>
                 ),
                 [TIMEOFF]: (
-                  <VacationContext.Provider value={{ employeeIDs, employees, vacations, dispatchVacations }}>
+                  <VacationContext.Provider
+                    value={{ employeeIDs, employees, vacations, dispatchVacations, newVacationId, setNewVacationId }}>
                     <Grid item xs={12}>
                       <Paper className={classes.paper}>
                         <TimeOff />

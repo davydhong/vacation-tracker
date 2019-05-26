@@ -11,7 +11,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 import { EmployeeRow, TimeOffRow } from './DataRows';
 import { EmployeeContext, VacationContext } from './Dashboard';
-import { getVacationRows, getNameSuggestions } from './utils';
+import { getVacationRows, getNameSuggestions, getNameIdTable } from './utils';
 const useStyles = makeStyles({
   table: {
     tableLayout: 'fixed'
@@ -20,8 +20,9 @@ const useStyles = makeStyles({
 
 export function Employees() {
   const classes = useStyles();
-  const { employees } = useContext(EmployeeContext);
+  const { employees, newEmployeeId, setNewEmployeeId } = useContext(EmployeeContext);
   const [displayCount, setDisplayCount] = useState(3);
+  const [newId, setNewId] = useState(10);
 
   return (
     <>
@@ -36,7 +37,7 @@ export function Employees() {
         </TableHead>
         <TableBody>
           {/* New Employee Input */}
-          <EmployeeRow className="employee-row-input" />
+          <EmployeeRow className="employee-row-input" {...{ newEmployeeId, setNewEmployeeId }} />
           {employees
             .filter((ele, idx) => idx < displayCount)
             .map((row, idx) => (
@@ -56,12 +57,13 @@ export function Employees() {
 
 export function TimeOff() {
   const classes = useStyles();
-  const { employeeIDs, employees, vacations } = useContext(VacationContext);
+  const { employeeIDs, employees, vacations, newVacationId, setNewVacationId } = useContext(VacationContext);
   const vacationRows = getVacationRows(vacations, employees, employeeIDs);
   const nameSuggestions = getNameSuggestions(employees);
   const [displayCount, setDisplayCount] = useState(3);
+  const [newId, setNewId] = useState(10);
 
-  console.log('vacationRows', vacationRows);
+  const nameIdTable = getNameIdTable(employees);
 
   return (
     <>
@@ -75,12 +77,15 @@ export function TimeOff() {
           </TableRow>
         </TableHead>
         <TableBody>
-          <TimeOffRow className="timeoff-row-input" />
+          <TimeOffRow
+            className="timeoff-row-input"
+            {...{ newVacationId, setNewVacationId, nameIdTable, nameSuggestions }}
+          />
           {vacationRows
             .filter((ele, idx) => idx < displayCount)
             .map((row, idx) => (
               // Existing Employee Input
-              <TimeOffRow {...{ row, key: row.id, idx, nameSuggestions }} />
+              <TimeOffRow {...{ row, key: row.id, idx }} />
             ))}
         </TableBody>
       </Table>

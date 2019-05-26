@@ -8,7 +8,7 @@ import Suggestion from './Suggestion';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
-import { EmployeeInfo, roles, IO_OPTIONS, isValidName } from './utils';
+import { EmployeeInfo, TimeOffInfo, roles, IO_OPTIONS, isValidName } from './utils';
 import { EmployeeContext, VacationContext } from './Dashboard';
 const { CREATE, READ, UPDATE, DELETE } = IO_OPTIONS;
 
@@ -31,32 +31,6 @@ function editMenuReducer(state, action) {
   }
 }
 
-const UPDATE_NAME = 'UPDATE_NAME';
-const UPDATE_ROLE = 'UPDATE_ROLE';
-const UPDATE_START_DATE = 'UPDATE_START_DATE';
-function employeeDataReducer(state, action) {
-  switch (action.type) {
-    case UPDATE:
-      if (action.fullName) {
-        if (isValidName(action.fullName)) {
-          console.log('action', action);
-          const nameArr = action.fullName.split();
-          if (nameArr.length > 1) {
-            const lastName = nameArr.pop();
-            const firstName = nameArr.join(' ');
-            state.firstName = firstName;
-            state.lastName = lastName;
-            console.log('state', state);
-          }
-        }
-      } else {
-      }
-      return state;
-    default:
-      return state;
-  }
-}
-
 function handleDataUpdate(
   e,
   state,
@@ -70,17 +44,20 @@ function handleDataUpdate(
     value
   });
   state[fieldName] = value;
+  console.log('state', state);
   setGenericState(state);
 }
 
-export function EmployeeRow({ row, idx }) {
+//
+// ─── EMPLOYEEROW ────────────────────────────────────────────────────────────────
+//
+export function EmployeeRow({ row, idx, newEmployeeId, setNewEmployeeId }) {
   const classes = useStyles();
   const [editMenu, dispatchEditMenu] = useReducer(editMenuReducer, false);
   const { dispatchEmployees } = useContext(EmployeeContext);
   if (!row) {
-    row = new EmployeeInfo(UPDATE);
+    row = new EmployeeInfo(UPDATE, newEmployeeId);
   }
-  // const [employeeData, dispatchEmployeeData] = useReducer(employeeDataReducer, row);
 
   const [employeeData, setEmployeeData] = useState(row);
 
@@ -133,7 +110,17 @@ export function EmployeeRow({ row, idx }) {
       <TableCell>
         {employeeData.io === UPDATE ? (
           // TODO: valid check to show
-          <CheckIcon className={classes.icon} onClick={() => dispatchEmployees({ type: READ, id: idx })} />
+          <CheckIcon
+            className={classes.icon}
+            onClick={() => {
+              console.log(employeeData);
+              if (newEmployeeId) {
+                dispatchEmployees({ type: CREATE, data: employeeData });
+              } else {
+                dispatchEmployees({ type: READ, id: idx });
+              }
+            }}
+          />
         ) : editMenu ? (
           <>
             <EditIcon
@@ -149,23 +136,40 @@ export function EmployeeRow({ row, idx }) {
     </TableRow>
   );
 }
+// ────────────────────────────────────────────────────────────────────────────────
 
-export function TimeOffRow({ idx, row, nameSuggestions }) {
-  console.log('row', row);
-
+//
+// ─── TIMEOFFROW ─────────────────────────────────────────────────────────────────
+//
+export function TimeOffRow({ idx, row, nameSuggestions, newVacationId, setNewVacationId, nameIdTable }) {
   if (!row) {
-    row = new EmployeeInfo(UPDATE);
+    row = new TimeOffInfo(UPDATE, newVacationId);
   }
   const { io, id, fullName, timeOffStart, timeOffEnd } = row;
   const classes = useStyles();
   const [editMenu, dispatchEditMenu] = useReducer(editMenuReducer, false);
   const { dispatchVacations } = useContext(VacationContext);
+  const [vacationData, setVacationData] = useState(row);
+
+  // console.log('vacationData', vacationData);
 
   return (
     <TableRow
       onMouseEnter={() => dispatchEditMenu({ type: SHOW_EDIT_OPTION })}
       onMouseLeave={() => dispatchEditMenu({ type: HIDE_EDIT_OPTION })}>
-      <TableCell>{fullName}</TableCell>
+      <TableCell>
+        {newVacationId ? (
+          <Suggestion
+            name="fullName"
+            callBack={eventValue => {
+              handleDataUpdate(null, vacationData, setVacationData, 'employeeId', nameIdTable[eventValue]);
+            }}
+            {...{ suggestions: nameSuggestions, defaultVal: '', placeholder: 'Search Employee' }}
+          />
+        ) : (
+          fullName
+        )}
+      </TableCell>
       <TableCell>
         {/* time fields */}
         {io === READ ? (
@@ -173,8 +177,9 @@ export function TimeOffRow({ idx, row, nameSuggestions }) {
         ) : (
           <DatePickers
             defaultTime={timeOffStart}
-            onChange={function handle(e) {
-              console.log('e.target.value', e);
+            name="timeOffStart"
+            handle={e => {
+              handleDataUpdate(e, vacationData, setVacationData, 'timeOffStart', e.target.value);
             }}
           />
         )}
@@ -186,8 +191,9 @@ export function TimeOffRow({ idx, row, nameSuggestions }) {
         ) : (
           <DatePickers
             defaultTime={timeOffEnd}
-            onChange={function handle(e) {
-              console.log('e.target.value', e);
+            name="timeOffEnd"
+            handle={e => {
+              handleDataUpdate(e, vacationData, setVacationData, 'timeOffEnd', e.target.value);
             }}
           />
         )}
@@ -195,10 +201,22 @@ export function TimeOffRow({ idx, row, nameSuggestions }) {
       <TableCell>
         {io === UPDATE ? (
           // TODO: valid check to show
-          <CheckIcon className={classes.icon} onClick={() => dispatchVacations({ type: READ, id: idx })} />
+          <CheckIcon
+            className={classes.icon}
+            onClick={() => {
+              if (newVacationId) {
+                dispatchVacations({ type: CREATE, data: vacationData });
+              } else {
+                dispatchVacations({ type: READ, id: idx });
+              }
+            }}
+          />
         ) : editMenu ? (
           <>
-            <EditIcon className={classes.icon} onClick={() => dispatchVacations({ type: UPDATE, id: idx })} />
+            <EditIcon
+              className={classes.icon}
+              onClick={() => dispatchVacations({ type: UPDATE, id: idx, data: vacationData })}
+            />
             <DeleteIcon className={classes.icon} onClick={() => dispatchVacations({ type: DELETE, id: idx })} />
           </>
         ) : (
@@ -208,3 +226,5 @@ export function TimeOffRow({ idx, row, nameSuggestions }) {
     </TableRow>
   );
 }
+
+// ────────────────────────────────────────────────────────────────────────────────

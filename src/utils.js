@@ -13,6 +13,7 @@ export class EmployeeInfo {
     return `${this.firstName} ${this.lastName}`;
   }
   set fullName(name) {
+    name = name.trim();
     if (isValidName(name)) {
       const nameArr = name.split(' ');
       if (nameArr.length > 1) {
@@ -25,7 +26,7 @@ export class EmployeeInfo {
   }
 }
 
-export class VacationInfo {
+export class TimeOffInfo {
   constructor(io = 'READ', id = 0, employeeId = '', timeOffStart = '', timeOffEnd = '') {
     this.io = io;
     this.id = id;
@@ -56,16 +57,19 @@ export const getNameSuggestions = rows =>
     label: person.fullName
   }));
 
-export const getNameTable = rows => {
+export const getNameIdTable = rows => {
   const result = {};
-  rows.forEach(row => (result[row.id] = row.fullName));
+  rows.forEach(row => {
+    result[row.id] = row.fullName;
+    result[row.fullName] = row.id;
+  });
   return result;
 };
 export const getVacationRows = (vacationData, employeeData, employeeIds) => {
   return vacationData
     .filter(vacation => employeeIds.has(vacation.employeeId))
     .map(vacation => {
-      vacation.fullName = getNameTable(employeeData)[vacation.employeeId];
+      vacation.fullName = getNameIdTable(employeeData)[vacation.employeeId];
       return vacation;
     });
 };
