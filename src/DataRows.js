@@ -8,9 +8,8 @@ import Suggestion from './Suggestion';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
-import { EmployeeInfo, TimeOffInfo, roles, IO_OPTIONS, isValidData } from './utils';
+import { EmployeeInfo, TimeOffInfo, roles, IO_OPTIONS, isValidData, isOnVacation } from './utils';
 import { EmployeeContext, VacationContext } from './Dashboard';
-import { create } from 'jss';
 const { CREATE, READ, UPDATE, DELETE } = IO_OPTIONS;
 
 const useStyles = makeStyles({
@@ -164,7 +163,7 @@ export function TimeOffRow({ idx, row, nameSuggestions, newVacationId, setNewVac
             {...{ suggestions: nameSuggestions, defaultVal: '', placeholder: 'Search Employee' }}
           />
         ) : (
-          fullName
+          fullName + '  ' + (isOnVacation(row) ? String.fromCodePoint(9969) : '')
         )}
       </TableCell>
       <TableCell>

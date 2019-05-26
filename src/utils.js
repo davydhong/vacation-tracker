@@ -114,3 +114,8 @@ export const isValidData = object => {
   }
   return true;
 };
+
+export const isOnVacation = vacationInfo => {
+  const today = new Date();
+  return new Date(vacationInfo.timeOffStart) <= today && today <= new Date(vacationInfo.timeOffEnd);
+};

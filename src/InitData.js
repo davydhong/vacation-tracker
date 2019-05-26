@@ -1,4 +1,4 @@
-import { EmployeeInfo, TimeOffInfo, roles, getNameSuggestions, IO_OPTIONS, getVacationRows } from './utils';
+import { EmployeeInfo, TimeOffInfo, roles, getNameSuggestions, IO_OPTIONS } from './utils';
 const { READ } = IO_OPTIONS;
 
 export const employeeData = [
@@ -12,7 +12,7 @@ export const employeeData = [
 export const vacationData = [
   new TimeOffInfo(READ, 1, 2, '2019-05-24', '2019-05-29'),
   new TimeOffInfo(READ, 2, 3, '2019-05-25', '2018-06-05'),
-  new TimeOffInfo(READ, 3, 5, '2019-06-24', '2019-06-26'),
+  new TimeOffInfo(READ, 3, 5, '2019-05-21', '2019-06-26'),
   new TimeOffInfo(READ, 4, 3, '2019-07-25', '2019-08-24')
 ];
 
