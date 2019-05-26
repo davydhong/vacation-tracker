@@ -26,8 +26,10 @@ const useStyles = makeStyles({
 
 export function Employees() {
   const classes = useStyles();
-  const { employees, newEmployeeId, setNewEmployeeId, dispatchEmployees } = useContext(EmployeeContext);
+  const { employees, dispatchEmployees, newEmployeeId, setNewEmployeeId } = useContext(EmployeeContext);
   const [displayCount, setDisplayCount] = useState(3);
+
+  console.log('employees', employees);
 
   return (
     <>

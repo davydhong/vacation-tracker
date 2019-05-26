@@ -108,3 +108,4 @@ export const isValidData = object => {
   }
   return true;
 };
+

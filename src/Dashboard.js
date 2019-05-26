@@ -74,7 +74,7 @@ const reducer = (state, action) => {
         console.log('newState', newState);
         return newState;
       }
-    // return state;
+    return state;
     case UPDATE:
       if (typeof action.id === 'number') {
         const RowToEdit = state[action.id];
@@ -133,10 +133,6 @@ export default function Dashboard() {
   const [newEmployeeId, setNewEmployeeId] = useState(10);
   const [newVacationId, setNewVacationId] = useState(10);
 
-  useEffect(() => {
-    console.log(employees);
-  }, [employees]);
-
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -182,7 +178,7 @@ export default function Dashboard() {
                   <EmployeeContext.Provider value={{ employees, dispatchEmployees, newEmployeeId, setNewEmployeeId }}>
                     <Grid item xs={12}>
                       <Paper className={classes.paper}>
-                        <Employees />
+                        <Employees/>
                       </Paper>
                     </Grid>
                   </EmployeeContext.Provider>

@@ -152,7 +152,7 @@ export function TimeOffRow({ idx, row, nameSuggestions, newVacationId, setNewVac
   if (!row) {
     row = new TimeOffInfo(UPDATE, newVacationId);
   }
-  const { io, id, fullName, timeOffStart, timeOffEnd } = row;
+  const { io, fullName, timeOffStart, timeOffEnd } = row;
   const classes = useStyles();
   const [editMenu, dispatchEditMenu] = useReducer(editMenuReducer, false);
   const { dispatchVacations } = useContext(VacationContext);
