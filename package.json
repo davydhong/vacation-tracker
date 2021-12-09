@@ -8,7 +8,7 @@
     "@material-ui/icons": "^4.0.0-rc.0",
     "gh-pages": "^2.0.1",
     "install": "^0.12.2",
-    "next": "^8.1.0",
+    "next": "^11.1.3",
     "npm": "^6.9.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
